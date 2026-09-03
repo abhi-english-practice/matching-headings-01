@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aptis Reading - Matching Headings</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --border: #dfe6e9;
+            --text: #2d3436;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            position: relative;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #636e72;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .instructions {
+            background: #e8f4fd;
+            border-left: 4px solid var(--accent);
+            padding: 15px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            color: var(--primary);
+        }
+
+        .instructions strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+        }
+
+        .paragraph {
+            background: #fafbfc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .paragraph:hover {
+            border-color: var(--accent);
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+        }
+
+        .paragraph-label {
+            display: inline-block;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.85rem;
+            padding: 3px 12px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .paragraph-text {
+            font-size: 0.95rem;
+            color: #444;
+            margin-bottom: 14px;
+        }
+
+        .heading-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .heading-selector label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--primary);
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        select {
+            flex: 1;
+            min-width: 220px;
+            padding: 10px 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%232c3e50' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        select.correct {
+            border-color: var(--success);
+            background-color: #eafaf1;
+            font-weight: 600;
+        }
+
+        select.incorrect {
+            border-color: var(--danger);
+            background-color: #fdf2f2;
+            font-weight: 600;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.3px;
+            min-width: 160px;
+        }
+
+        .btn-check {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        .btn-check:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .btn-reset {
+            background: #b2bec3;
+            color: #fff;
+        }
+
+        .btn-reset:hover {
+            background: #95a5a6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(149, 165, 166, 0.4);
+        }
+
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding: 24px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            border: 2px solid var(--border);
+        }
+
+        .result-section.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .score-box {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .score-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .score-label {
+            font-size: 1rem;
+            color: #636e72;
+            margin-top: 2px;
+        }
+
+        .score-message {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .explanation {
+            margin-top: 18px;
+        }
+
+        .explanation-item {
+            background: #fff;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin-bottom: 14px;
+            border-left: 5px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .explanation-item.correct-ans {
+            border-left-color: var(--success);
+            background: #f0faf4;
+        }
+
+        .explanation-item.wrong-ans {
+            border-left-color: var(--danger);
+            background: #fef5f5;
+        }
+
+        .explanation-item h4 {
+            font-size: 0.95rem;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .explanation-item p {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .explanation-item .user-choice {
+            font-weight: 700;
+            color: var(--danger);
+        }
+
+        .explanation-item .correct-choice {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .quote {
+            background: #fffde7;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-style: italic;
+            font-size: 0.85rem;
+            color: #555;
+            margin-top: 8px;
+            border-left: 3px solid var(--warning);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+                border-radius: 10px;
+            }
+
+            h1 {
+                font-size: 1.4rem;
+            }
+
+            .heading-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            select {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .btn {
+                min-width: 130px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>📖 Aptis Reading: Matching Headings</h1>
+        <p class="subtitle">Luyện tập dạng bài nối tiêu đề với đoạn văn</p>
+
+        <div class="instructions">
+            <strong>📌 Hướng dẫn:</strong>
+            Đọc các đoạn văn A–D bên dưới. Chọn tiêu đề phù hợp nhất cho mỗi đoạn từ danh sách 7 tiêu đề.
+            Có <strong>3 tiêu đề gây nhiễu</strong> không cần dùng. Sau khi chọn xong, nhấn <strong>"Chấm điểm"</strong> để xem kết quả.
+        </div>
+
+        <h2 class="section-title">📄 The History of Tea</h2>
+
+        <!-- Đoạn A -->
+        <div class="paragraph" id="para-A">
+            <span class="paragraph-label">ĐOẠN A</span>
+            <p class="paragraph-text">
+                Tea is one of the most widely consumed drinks in the world today, second only to water. It is enjoyed in countless forms across nearly every culture, from the formal tea ceremonies of Japan to the casual afternoon cup in British homes. But few people realise that this everyday beverage has a rich and complex past that spans thousands of years and several continents.
+            </p>
+            <div class="heading-selector">
+                <label for="select-A">Chọn tiêu đề:</label>
+                <select id="select-A">
+                    <option value="">-- Chọn tiêu đề --</option>
+                    <option value="1">1. The global spread of tea through trade</option>
+                    <option value="2">2. Why tea became cheaper than coffee</option>
+                    <option value="3">3. A drink with a long and fascinating history</option>
+                    <option value="4">4. The legendary origins of tea</option>
+                    <option value="5">5. Modern production and enduring traditions</option>
+                    <option value="6">6. The health benefits of drinking tea</option>
+                    <option value="7">7. Tea ceremonies around the world</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Đoạn B -->
+        <div class="paragraph" id="para-B">
+            <span class="paragraph-label">ĐOẠN B</span>
+            <p class="paragraph-text">
+                According to popular legend, tea was discovered by accident around 2737 BCE when the Chinese Emperor Shen Nung was resting beneath a tree. Some leaves from the tree fell into his pot of boiling water, creating a pleasant aroma. Curious, the emperor tasted the liquid and found it refreshing. Although this story cannot be verified, historical records confirm that tea cultivation began in China and gradually spread to neighbouring countries.
+            </p>
+            <div class="heading-selector">
+                <label for="select-B">Chọn tiêu đề:</label>
+                <select id="select-B">
+                    <option value="">-- Chọn tiêu đề --</option>
+                    <option value="1">1. The global spread of tea through trade</option>
+                    <option value="2">2. Why tea became cheaper than coffee</option>
+                    <option value="3">3. A drink with a long and fascinating history</option>
+                    <option value="4">4. The legendary origins of tea</option>
+                    <option value="5">5. Modern production and enduring traditions</option>
+                    <option value="6">6. The health benefits of drinking tea</option>
+                    <option value="7">7. Tea ceremonies around the world</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Đoạn C -->
+        <div class="paragraph" id="para-C">
+            <span class="paragraph-label">ĐOẠN C</span>
+            <p class="paragraph-text">
+                By the 17th century, tea had reached Europe through Dutch and Portuguese traders. At first, it was an expensive luxury that only the wealthy could afford. However, as trade routes expanded and the British East India Company increased imports, the price fell dramatically. Tea soon became a staple in households across Britain, giving rise to traditions such as afternoon tea in the 19th century.
+            </p>
+            <div class="heading-selector">
+                <label for="select-C">Chọn tiêu đề:</label>
+                <select id="select-C">
+                    <option value="">-- Chọn tiêu đề --</option>
+                    <option value="1">1. The global spread of tea through trade</option>
+                    <option value="2">2. Why tea became cheaper than coffee</option>
+                    <option value="3">3. A drink with a long and fascinating history</option>
+                    <option value="4">4. The legendary origins of tea</option>
+                    <option value="5">5. Modern production and enduring traditions</option>
+                    <option value="6">6. The health benefits of drinking tea</option>
+                    <option value="7">7. Tea ceremonies around the world</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Đoạn D -->
+        <div class="paragraph" id="para-D">
+            <span class="paragraph-label">ĐOẠN D</span>
+            <p class="paragraph-text">
+                Today, tea is grown in over 40 countries, with China, India, Kenya and Sri Lanka among the largest producers. Advances in technology have transformed production methods, making tea more accessible than ever before. Yet despite these changes, many traditional customs surrounding tea remain unchanged, connecting modern drinkers with centuries of history.
+            </p>
+            <div class="heading-selector">
+                <label for="select-D">Chọn tiêu đề:</label>
+                <select id="select-D">
+                    <option value="">-- Chọn tiêu đề --</option>
+                    <option value="1">1. The global spread of tea through trade</option>
+                    <option value="2">2. Why tea became cheaper than coffee</option>
+                    <option value="3">3. A drink with a long and fascinating history</option>
+                    <option value="4">4. The legendary origins of tea</option>
+                    <option value="5">5. Modern production and enduring traditions</option>
+                    <option value="6">6. The health benefits of drinking tea</option>
+                    <option value="7">7. Tea ceremonies around the world</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Nút bấm -->
+        <div class="btn-group">
+            <button class="btn btn-check" onclick="checkAnswers()">✅ Chấm điểm</button>
+            <button class="btn btn-reset" onclick="resetAll()">🔄 Làm lại</button>
+        </div>
+
+        <!-- Kết quả -->
+        <div class="result-section" id="result-section">
+            <div class="score-box">
+                <div class="score-number" id="score-number">0/4</div>
+                <div class="score-label">Số câu đúng</div>
+                <div class="score-message" id="score-message"></div>
+            </div>
+            <div class="explanation" id="explanation-area">
+                <!-- Giải thích sẽ được thêm bằng JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Đáp án đúng
+        const correctAnswers = {
+            'A': '3',
+            'B': '4',
+            'C': '1',
+            'D': '5'
+        };
+
+        // Danh sách tiêu đề đầy đủ
+        const headingTexts = {
+            '1': '1. The global spread of tea through trade',
+            '2': '2. Why tea became cheaper than coffee',
+            '3': '3. A drink with a long and fascinating history',
+            '4': '4. The legendary origins of tea',
+            '5': '5. Modern production and enduring traditions',
+            '6': '6. The health benefits of drinking tea',
+            '7': '7. Tea ceremonies around the world'
+        };
+
+        // Giải thích chi tiết cho từng đoạn
+        const explanations = {
+            A: {
+                correctHeading: '3',
+                correctHeadingText: 'A drink with a long and fascinating history',
+                explanation: 'Đoạn A giới thiệu chung về trà – thức uống phổ biến toàn cầu với lịch sử lâu đời và phong phú.',
+                quote: 'But few people realise that this everyday beverage has a rich and complex past that spans thousands of years and several continents.'
+            },
+            B: {
+                correctHeading: '4',
+                correctHeadingText: 'The legendary origins of tea',
+                explanation: 'Đoạn B kể về truyền thuyết phát hiện ra trà của Hoàng đế Thần Nông và xác nhận nguồn gốc trà từ Trung Quốc.',
+                quote: 'According to popular legend, tea was discovered by accident around 2737 BCE when the Chinese Emperor Shen Nung was resting beneath a tree.'
+            },
+            C: {
+                correctHeading: '1',
+                correctHeadingText: 'The global spread of tea through trade',
+                explanation: 'Đoạn C mô tả quá trình trà du nhập vào châu Âu nhờ thương nhân Hà Lan và Bồ Đào Nha, sau đó lan rộng nhờ thương mại quốc tế.',
+                quote: 'By the 17th century, tea had reached Europe through Dutch and Portuguese traders. However, as trade routes expanded and the British East India Company increased imports...'
+            },
+            D: {
+                correctHeading: '5',
+                correctHeadingText: 'Modern production and enduring traditions',
+                explanation: 'Đoạn D nói về sản xuất trà hiện đại ở hơn 40 quốc gia, công nghệ tiên tiến, đồng thời các truyền thống vẫn được giữ gìn.',
+                quote: 'Today, tea is grown in over 40 countries... Advances in technology have transformed production methods... many traditional customs surrounding tea remain unchanged.'
+            }
+        };
+
+        function checkAnswers() {
+            const paragraphs = ['A', 'B', 'C', 'D'];
+            let score = 0;
+            let allAnswered = true;
+
+            // Kiểm tra xem tất cả đã chọn chưa
+            paragraphs.forEach(p => {
+                const select = document.getElementById(`select-${p}`);
+                if (!select.value) {
+                    allAnswered = false;
+                }
+            });
+
+            if (!allAnswered) {
+                alert('⚠️ Vui lòng chọn tiêu đề cho tất cả các đoạn văn trước khi chấm điểm!');
+                return;
+            }
+
+            // Chấm điểm và highlight
+            paragraphs.forEach(p => {
+                const select = document.getElementById(`select-${p}`);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers[p];
+
+                if (userAnswer === correctAnswer) {
+                    score++;
+                    select.classList.add('correct');
+                    select.classList.remove('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                    select.classList.remove('correct');
+                }
+            });
+
+            // Hiển thị kết quả
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.add('show');
+
+            // Cập nhật điểm số
+            document.getElementById('score-number').textContent = `${score}/4`;
+
+            // Thông điệp dựa trên điểm
+            const messageElement = document.getElementById('score-message');
+            if (score === 4) {
+                messageElement.textContent = '🌟 Xuất sắc! Bạn đã làm đúng tất cả!';
+                messageElement.style.color = '#27ae60';
+            } else if (score === 3) {
+                messageElement.textContent = '👏 Rất tốt! Chỉ thiếu một chút nữa thôi!';
+                messageElement.style.color = '#2ecc71';
+            } else if (score === 2) {
+                messageElement.textContent = '👍 Khá ổn! Hãy xem lại giải thích bên dưới nhé.';
+                messageElement.style.color = '#f39c12';
+            } else if (score === 1) {
+                messageElement.textContent = '📚 Cần luyện tập thêm! Đọc kỹ giải thích để hiểu rõ hơn.';
+                messageElement.style.color = '#e67e22';
+            } else {
+                messageElement.textContent = '💪 Đừng nản! Hãy đọc lại bài và thử lại nhé.';
+                messageElement.style.color = '#e74c3c';
+            }
+
+            // Tạo giải thích chi tiết
+            const explanationArea = document.getElementById('explanation-area');
+            explanationArea.innerHTML = '';
+
+            paragraphs.forEach(p => {
+                const select = document.getElementById(`select-${p}`);
+                const userAnswer = select.value;
+                const correctAnswer = correctAnswers[p];
+                const expData = explanations[p];
+                const isCorrect = userAnswer === correctAnswer;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = `explanation-item ${isCorrect ? 'correct-ans' : 'wrong-ans'}`;
+
+                let userChoiceText = headingTexts[userAnswer] || 'Chưa chọn';
+                let correctChoiceText = headingTexts[correctAnswer];
+
+                let html = `
+                    <h4>📌 Đoạn ${p} — ${isCorrect ? '✅ Đúng!' : '❌ Sai!'}</h4>
+                    <p>${expData.explanation}</p>
+                `;
+
+                if (!isCorrect) {
+                    html += `
+                        <p>
+                            <span class="user-choice">Bạn chọn:</span> ${userChoiceText}<br>
+                            <span class="correct-choice">Đáp án đúng:</span> ${correctChoiceText}
+                        </p>
+                    `;
+                } else {
+                    html += `
+                        <p><span class="correct-choice">Đáp án đúng:</span> ${correctChoiceText}</p>
+                    `;
+                }
+
+                html += `
+                    <div class="quote">💬 "${expData.quote}"</div>
+                `;
+
+                itemDiv.innerHTML = html;
+                explanationArea.appendChild(itemDiv);
+            });
+
+            // Cuộn đến kết quả
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function resetAll() {
+            const paragraphs = ['A', 'B', 'C', 'D'];
+
+            paragraphs.forEach(p => {
+                const select = document.getElementById(`select-${p}`);
+                select.value = '';
+                select.classList.remove('correct', 'incorrect');
+            });
+
+            const resultSection = document.getElementById('result-section');
+            resultSection.classList.remove('show');
+
+            document.getElementById('explanation-area').innerHTML = '';
+            document.getElementById('score-number').textContent = '0/4';
+            document.getElementById('score-message').textContent = '';
+
+            // Cuộn lên đầu trang
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>
